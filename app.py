@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     # Pass Company list to the front end
-    return render_template('search.html', companies=companies)
+    return render_template('research.html', companies=companies)
 
 @app.route('/get_company_data', methods=['POST'])
 def get_company_data():
@@ -35,12 +35,10 @@ def get_company_data():
     company_data = df.iloc[company_start_index + 1:next_company_index]
     company_data = company_data[company_data['Unnamed: 0'].isin(['Supplier', 'Buyer'])]
 
-    # Ensure only rows related to the selected Company are included
-    company_data = company_data.reset_index()
-
     # Convert to a list of dictionaries for JSON response
     data = company_data[['기업명', '국가', '품목', 'Last Shipment', 'Total # of Shipment']].dropna().to_dict(orient='records')
     return jsonify(data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
