@@ -1,0 +1,37 @@
+# OS 관련 파일
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python 캐시 파일
+__pycache__/
+*.pyc
+*.pyo
+*.whl
+
+# 환경 설정 및 숨김 파일
+*.env
+*.log
+*.ini
+*.bak
+
+# IDE 및 에디터 관련 파일
+.vscode/
+.ipynb_checkpoints/
+.idea/
+*.iml
+
+# 기타 불필요한 파일
+*.xlsx
+*.xls
+*.pptx
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.pdf
+*.lnk
+
+# 프로젝트 외부 파일 경로
+../../../../../*

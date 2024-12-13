@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업 무역 정보</title>
+    <script>
+        async function fetchCompanyInfo() {
+            const company = document.getElementById('companySelect').value;
+            if (!company) {
+                alert("회사를 선택하세요.");
+                return;
+            }
+
+            const response = await fetch('/get_company_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ company })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('result').innerHTML = `
+                    <h3>무역 정보</h3>
+                    <p><strong>기업명:</strong> ${data.기업명}</p>
+                    <p><strong>국가:</strong> ${data.국가}</p>
+                    <p><strong>품목:</strong> ${data.품목}</p>
+                    <p><strong>마지막 선적:</strong> ${data['Last Shipment']}</p>
+                    <p><strong>총 선적 수:</strong> ${data['Total # of Shipment']}</p>
+                `;
+            } else {
+                document.getElementById('result').innerHTML = `<p>${data.error}</p>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>기업 무역 정보 조회</h1>
+    <label for="companySelect">기업 선택:</label>
+    <select id="companySelect">
+        <option value="">--회사를 선택하세요--</option>
+        {% for company in companies %}
+        <option value="{{ company }}">{{ company }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="fetchCompanyInfo()">조회</button>
+
+    <div id="result" style="margin-top:20px;"></div>
+</body>
+</html>
