@@ -3,19 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>기업 무역 정보 조회</title>
+    <title>Company Trade Info</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
         select, button {
-            margin: 10px 0;
             padding: 8px;
+            margin: 10px 0;
             font-size: 16px;
         }
         table {
@@ -26,24 +22,20 @@
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: left;
         }
         th {
             background-color: #f4f4f4;
         }
-        #result {
-            margin-top: 20px;
-        }
     </style>
     <script>
-        async function fetchCompanyInfo() {
+        async function fetchCompanyData() {
             const company = document.getElementById('companySelect').value;
             if (!company) {
-                alert("회사를 선택하세요.");
+                alert("Please select a company.");
                 return;
             }
 
-            const response = await fetch('/get_company_info', {
+            const response = await fetch('/get_company_data', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,26 +47,25 @@
             const resultDiv = document.getElementById('result');
 
             if (response.ok) {
-                // Clear previous result
-                resultDiv.innerHTML = `
-                    <h2>무역 정보</h2>
-                    <table>
-                        <tr>
-                            <th>기업명</th>
-                            <th>국가</th>
-                            <th>품목</th>
-                            <th>마지막 선적</th>
-                            <th>총 선적 수</th>
-                        </tr>
-                        <tr>
-                            <td>${data.기업명}</td>
-                            <td>${data.국가}</td>
-                            <td>${data.품목}</td>
-                            <td>${data['Last Shipment']}</td>
-                            <td>${data['Total # of Shipment']}</td>
-                        </tr>
-                    </table>
-                `;
+                let table = `<table>
+                                <tr>
+                                    <th>기업명</th>
+                                    <th>국가</th>
+                                    <th>품목</th>
+                                    <th>마지막 선적</th>
+                                    <th>총 선적 수</th>
+                                </tr>`;
+                data.forEach(row => {
+                    table += `<tr>
+                                <td>${row['기업명']}</td>
+                                <td>${row['국가']}</td>
+                                <td>${row['품목']}</td>
+                                <td>${row['Last Shipment']}</td>
+                                <td>${row['Total # of Shipment']}</td>
+                              </tr>`;
+                });
+                table += `</table>`;
+                resultDiv.innerHTML = table;
             } else {
                 resultDiv.innerHTML = `<p>${data.error}</p>`;
             }
@@ -90,8 +81,7 @@
         <option value="{{ company }}">{{ company }}</option>
         {% endfor %}
     </select>
-    <button onclick="fetchCompanyInfo()">조회</button>
-
+    <button onclick="fetchCompanyData()">조회</button>
     <div id="result"></div>
 </body>
 </html>
