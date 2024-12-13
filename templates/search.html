@@ -3,7 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>기업 무역 정보</title>
+    <title>기업 무역 정보 조회</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        select, button {
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
     <script>
         async function fetchCompanyInfo() {
             const company = document.getElementById('companySelect').value;
@@ -21,17 +52,31 @@
             });
 
             const data = await response.json();
+            const resultDiv = document.getElementById('result');
+
             if (response.ok) {
-                document.getElementById('result').innerHTML = `
-                    <h3>무역 정보</h3>
-                    <p><strong>기업명:</strong> ${data.기업명}</p>
-                    <p><strong>국가:</strong> ${data.국가}</p>
-                    <p><strong>품목:</strong> ${data.품목}</p>
-                    <p><strong>마지막 선적:</strong> ${data['Last Shipment']}</p>
-                    <p><strong>총 선적 수:</strong> ${data['Total # of Shipment']}</p>
+                // Clear previous result
+                resultDiv.innerHTML = `
+                    <h2>무역 정보</h2>
+                    <table>
+                        <tr>
+                            <th>기업명</th>
+                            <th>국가</th>
+                            <th>품목</th>
+                            <th>마지막 선적</th>
+                            <th>총 선적 수</th>
+                        </tr>
+                        <tr>
+                            <td>${data.기업명}</td>
+                            <td>${data.국가}</td>
+                            <td>${data.품목}</td>
+                            <td>${data['Last Shipment']}</td>
+                            <td>${data['Total # of Shipment']}</td>
+                        </tr>
+                    </table>
                 `;
             } else {
-                document.getElementById('result').innerHTML = `<p>${data.error}</p>`;
+                resultDiv.innerHTML = `<p>${data.error}</p>`;
             }
         }
     </script>
@@ -47,6 +92,6 @@
     </select>
     <button onclick="fetchCompanyInfo()">조회</button>
 
-    <div id="result" style="margin-top:20px;"></div>
+    <div id="result"></div>
 </body>
 </html>
