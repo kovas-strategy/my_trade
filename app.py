@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 
 # Load the data
-data_file = 'data.xlsx'  # Ensure this file is included in your repository
+data_file = 'data.xlsx'  # Replace with the path to your Excel file
 df = pd.read_excel(data_file, sheet_name='Sheet1')
 
 # Extract Company list
@@ -31,7 +31,7 @@ def get_company_data():
     next_company_index = next_company_index[0] if not next_company_index.empty else len(df)
 
     # Filter rows for the selected company
-    # Start from the row immediately after the selected company
+    # Only include rows from the current Company to the next Company, excluding the Company row itself
     company_data = df.iloc[company_start_index + 1:next_company_index]
     company_data = company_data[company_data['Unnamed: 0'].isin(['Supplier', 'Buyer'])]
 
