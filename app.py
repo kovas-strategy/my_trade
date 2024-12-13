@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', companies=companies)
+    return render_template('search.html', companies=companies)
 
 @app.route('/get_company_data', methods=['POST'])
 def get_company_data():
