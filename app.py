@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 
 # Load the data
-data_file = 'data.xlsx'  # Replace with your file path
+data_file = 'data.xlsx'
 df = pd.read_excel(data_file, sheet_name='Sheet1')
 
 # Flask app
