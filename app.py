@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     # Pass Company list to the front end
-    return render_template('search.html', companies=companies)
+    return render_template('index.html', companies=companies)
 
 @app.route('/get_company_data', methods=['POST'])
 def get_company_data():
