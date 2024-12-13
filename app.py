@@ -18,7 +18,6 @@ except KeyError:
 # Flask app
 app = Flask(__name__)
 
-# Handle HEAD requests globally
 @app.before_request
 def handle_head_request():
     if request.method == 'HEAD':
@@ -26,7 +25,7 @@ def handle_head_request():
 
 @app.route('/')
 def index():
-    return render_template('search.html', companies=companies)
+    return render_template('research.html', companies=companies)
 
 @app.route('/get_company_data', methods=['POST'])
 def get_company_data():
@@ -49,9 +48,11 @@ def get_company_data():
     next_company_index = next_company_index[0] if not next_company_index.empty else len(df)
 
     # Filter rows for the selected company
+    # Only include rows between the selected company and the next company
     company_data = df.iloc[company_start_index + 1:next_company_index]
     company_data = company_data[company_data['Unnamed: 0'].isin(['Supplier', 'Buyer'])]
 
+    # Convert to a list of dictionaries for JSON response
     data = company_data[['기업명', '국가', '품목', 'Last Shipment', 'Total # of Shipment']].dropna().to_dict(orient='records')
     return jsonify(data)
 
