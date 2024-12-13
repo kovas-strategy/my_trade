@@ -31,9 +31,12 @@ def get_company_data():
     next_company_index = next_company_index[0] if not next_company_index.empty else len(df)
 
     # Filter rows for the selected company
-    # Only include rows from the current Company to the next Company, excluding the Company row itself
+    # Start from the row immediately after the selected company
     company_data = df.iloc[company_start_index + 1:next_company_index]
     company_data = company_data[company_data['Unnamed: 0'].isin(['Supplier', 'Buyer'])]
+
+    # Ensure only rows related to the selected Company are included
+    company_data = company_data.reset_index()
 
     # Convert to a list of dictionaries for JSON response
     data = company_data[['기업명', '국가', '품목', 'Last Shipment', 'Total # of Shipment']].dropna().to_dict(orient='records')
