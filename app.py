@@ -20,9 +20,10 @@ def index():
     companies = sorted(companies)  # Sort the company list alphabetically
     return render_template('search.html', companies=companies)
 
-@app.route('/get_company_data', methods=['POST'])
-def get_company_data():
-    selected_company = request.json.get('company')
+@app.route('/company', methods=['GET'])
+def company_redirect():
+    # Get the company name from query parameters
+    selected_company = request.args.get('company')
     if not selected_company:
         return jsonify({"error": "No company selected"}), 400
 
@@ -45,7 +46,7 @@ def get_company_data():
     result = []
     for _, row in company_data.iterrows():
         company_name = row['기업명']
-        hyperlink = f"/?company={company_name}" if company_name in company_list else None
+        hyperlink = f"/company?company={company_name}" if company_name in company_list else None
         result.append({
             "기업명": company_name,
             "국가": row['국가'],
@@ -55,7 +56,8 @@ def get_company_data():
             "hyperlink": hyperlink
         })
 
-    return jsonify(result)
+    # Render the template with the selected company and its data
+    return render_template('results.html', selected_company=selected_company, data=result)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

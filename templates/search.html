@@ -19,12 +19,12 @@
     <div id="results"></div>
 
     <script>
-        document.getElementById("searchButton").addEventListener("click", function () {
-            const selectedCompany = document.getElementById("company").value;
+        // Function to fetch and update company data
+        function fetchCompanyData(companyName) {
             fetch("/get_company_data", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ company: selectedCompany }),
+                body: JSON.stringify({ company: companyName }),
             })
             .then(response => response.json())
             .then(data => {
@@ -45,7 +45,7 @@
 
                     data.forEach(row => {
                         const hyperlink = row.hyperlink
-                            ? `<a href="${row.hyperlink}">${row["기업명"]}</a>`
+                            ? `<a href="#" onclick="fetchCompanyData('${row['기업명']}')">${row["기업명"]}</a>`
                             : row["기업명"];
                         table.innerHTML += `<tr>
                             <td>${hyperlink}</td>
@@ -59,6 +59,12 @@
                     resultsDiv.appendChild(table);
                 }
             });
+        }
+
+        // Event listener for the search button
+        document.getElementById("searchButton").addEventListener("click", function () {
+            const selectedCompany = document.getElementById("company").value;
+            fetchCompanyData(selectedCompany);
         });
     </script>
 </body>
