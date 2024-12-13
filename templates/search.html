@@ -3,85 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Trade Info</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        select, button {
-            padding: 8px;
-            margin: 10px 0;
-            font-size: 16px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
-    <script>
-        async function fetchCompanyData() {
-            const company = document.getElementById('companySelect').value;
-            if (!company) {
-                alert("Please select a company.");
-                return;
-            }
-
-            const response = await fetch('/get_company_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ company })
-            });
-
-            const data = await response.json();
-            const resultDiv = document.getElementById('result');
-
-            if (response.ok) {
-                let table = `<table>
-                                <tr>
-                                    <th>기업명</th>
-                                    <th>국가</th>
-                                    <th>품목</th>
-                                    <th>마지막 선적</th>
-                                    <th>총 선적 수</th>
-                                </tr>`;
-                data.forEach(row => {
-                    table += `<tr>
-                                <td>${row['기업명']}</td>
-                                <td>${row['국가']}</td>
-                                <td>${row['품목']}</td>
-                                <td>${row['Last Shipment']}</td>
-                                <td>${row['Total # of Shipment']}</td>
-                              </tr>`;
-                });
-                table += `</table>`;
-                resultDiv.innerHTML = table;
-            } else {
-                resultDiv.innerHTML = `<p>${data.error}</p>`;
-            }
-        }
-    </script>
+    <title>Company Viewer</title>
 </head>
 <body>
-    <h1>기업 무역 정보 조회</h1>
-    <label for="companySelect">기업 선택:</label>
-    <select id="companySelect">
-        <option value="">--회사를 선택하세요--</option>
-        {% for company in companies %}
-        <option value="{{ company }}">{{ company }}</option>
-        {% endfor %}
-    </select>
-    <button onclick="fetchCompanyData()">조회</button>
-    <div id="result"></div>
+    <h1>Company Viewer</h1>
+    <form method="post" id="companyForm">
+        <label for="company">Select a Company:</label>
+        <select name="company" id="company">
+            {% for company in companies %}
+                <option value="{{ company }}">{{ company }}</option>
+            {% endfor %}
+        </select>
+        <button type="button" id="searchButton">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById("searchButton").addEventListener("click", function () {
+            const selectedCompany = document.getElementById("company").value;
+            fetch("/get_company_data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ company: selectedCompany }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = ""; // Clear previous results
+                if (data.error) {
+                    resultsDiv.innerHTML = `<p>${data.error}</p>`;
+                } else {
+                    const table = document.createElement("table");
+                    const header = `<tr>
+                        <th>기업명</th>
+                        <th>국가</th>
+                        <th>품목</th>
+                        <th>Last Shipment</th>
+                        <th>Total # of Shipment</th>
+                    </tr>`;
+                    table.innerHTML = header;
+
+                    data.forEach(row => {
+                        const hyperlink = row.hyperlink
+                            ? `<a href="${row.hyperlink}">${row["기업명"]}</a>`
+                            : row["기업명"];
+                        table.innerHTML += `<tr>
+                            <td>${hyperlink}</td>
+                            <td>${row["국가"]}</td>
+                            <td>${row["품목"]}</td>
+                            <td>${row["Last Shipment"]}</td>
+                            <td>${row["Total # of Shipment"]}</td>
+                        </tr>`;
+                    });
+
+                    resultsDiv.appendChild(table);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
