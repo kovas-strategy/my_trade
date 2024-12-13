@@ -26,15 +26,13 @@ def get_company_data():
     # Find the starting index of the selected company
     company_start_index = df[df['기업명'] == selected_company].index[0]
 
-    # Find the range of data related to the selected company
-    # Start from the row immediately after the selected company
-    start_index = company_start_index + 1
-    # Find the next "Company" row, or use the end of the dataframe if none exists
+    # Find the next "Company" index to limit the range
     next_company_index = df[(df.index > company_start_index) & (df['Unnamed: 0'] == 'Company')].index
-    end_index = next_company_index[0] if not next_company_index.empty else len(df)
+    next_company_index = next_company_index[0] if not next_company_index.empty else len(df)
 
     # Filter rows for the selected company
-    company_data = df.iloc[start_index:end_index]
+    # Start from the row immediately after the selected company
+    company_data = df.iloc[company_start_index + 1:next_company_index]
     company_data = company_data[company_data['Unnamed: 0'].isin(['Supplier', 'Buyer'])]
 
     # Convert to a list of dictionaries for JSON response
